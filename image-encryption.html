@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Encryption</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 50px;
+        }
+        .header {
+            padding: 10px;
+            text-align: right;
+        }
+        .header a {
+            color: #00ffff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #0ff;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1em;
+            background: #222;
+            color: #0ff;
+            border: 1px solid #0ff;
+            cursor: pointer;
+        }
+        input[type="file"] {
+            border: none;
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html">Home</a>
+        <a href="encode-decode.html">Encode/Decode</a>
+        <a href="image-encryption.html">Image Encryption</a>
+        <a href="about.html">About Us</a>
+        <a href="faqs.html">FAQs</a>
+    </div>
+    <h1>Image Encryption</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="encryptImage()">Encrypt</button>
+    <button onclick="decryptImage()">Decrypt</button>
+    <br>
+    <canvas id="canvas"></canvas>
+    <br>
+    <a id="downloadLink" style="display:none; color: #0ff;" download="encrypted.png">Download Encrypted Image</a>
+    <script>
+        let encryptionKey = 123; // Simple XOR key
+        let originalImageData;
+
+        function encryptImage() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image file.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    let data = imageData.data;
+                    for (let i = 0; i < data.length; i++) {
+                        data[i] ^= encryptionKey;
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                    originalImageData = imageData;
+                    let encryptedImage = canvas.toDataURL("image/png");
+                    let downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = encryptedImage;
+                    downloadLink.style.display = 'block';
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function decryptImage() {
+            if (!originalImageData) {
+                alert("No encrypted image available.");
+                return;
+            }
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            let data = originalImageData.data;
+            for (let i = 0; i < data.length; i++) {
+                data[i] ^= encryptionKey;
+            }
+            ctx.putImageData(originalImageData, 0, 0);
+            let decryptedImage = canvas.toDataURL("image/png");
+            let downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = decryptedImage;
+            downloadLink.download = "decrypted.png";
+            downloadLink.innerText = "Download Decrypted Image";
+            downloadLink.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

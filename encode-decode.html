@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encoder Decoder</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 50px;
+        }
+        .header {
+            padding: 10px;
+            text-align: right;
+        }
+        .header a {
+            color: #00ffff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #0ff;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            background: #111;
+            color: #0ff;
+            border: 1px solid #0ff;
+            padding: 10px;
+            font-size: 1.2em;
+        }
+        button, select {
+            background: #0ff;
+            color: #111;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 0 10px #0ff;
+        }
+        button:hover, select:hover {
+            background: #00a;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html">Home</a>
+        <a href="encode-decode.html">Encode/Decode</a>
+        <a href="image-encryption.html">Image Encryption</a>
+        <a href="about.html">About Us</a>
+        <a href="faqs.html">FAQs</a>
+    </div>
+    <h1>Encode. Decode. Secure.</h1>
+    <select id="method">
+        <option value="base64">Base64</option>
+        <option value="rot13">ROT13</option>
+        <option value="hex">Hex</option>
+        <option value="binary">Binary</option>
+        <option value="aes">AES</option>
+        <option value="rsa">RSA</option>
+    </select>
+    <br>
+    <textarea id="inputText" placeholder="Enter text here..."></textarea>
+    <br>
+    <button onclick="encodeText()">Encode</button>
+    <button onclick="decodeText()">Decode</button>
+    <button onclick="copyToClipboard()">Copy</button>
+    <br>
+    <textarea id="outputText" placeholder="Result..." readonly></textarea>
+    
+    <script>
+        async function encodeText() {
+            let text = document.getElementById("inputText").value;
+            let method = document.getElementById("method").value;
+            let encoded = "";
+            
+            if (method === "base64") {
+                encoded = btoa(text);
+            } else if (method === "rot13") {
+                encoded = text.replace(/[a-zA-Z]/g, function(c){
+                    return String.fromCharCode(
+                        c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13)
+                    );
+                });
+            } else if (method === "hex") {
+                encoded = text.split('').map(c => c.charCodeAt(0).toString(16)).join(' ');
+            } else if (method === "binary") {
+                encoded = text.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+            } else if (method === "aes" || method === "rsa") {
+                let response = await fetch("http://127.0.0.1:5000/encode", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ method: method, text: text })
+                });
+                let data = await response.json();
+                encoded = data.result;
+            }
+            document.getElementById("outputText").value = encoded;
+        }
+        
+        async function decodeText() {
+            let text = document.getElementById("inputText").value;
+            let method = document.getElementById("method").value;
+            let decoded = "";
+            
+            try {
+                if (method === "base64") {
+                    decoded = atob(text);
+                } else if (method === "rot13") {
+                    decoded = text.replace(/[a-zA-Z]/g, function(c){
+                        return String.fromCharCode(
+                            c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13)
+                        );
+                    });
+                } else if (method === "hex") {
+                    decoded = text.split(' ').map(h => String.fromCharCode(parseInt(h, 16))).join('');
+                } else if (method === "binary") {
+                    decoded = text.split(' ').map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                } else if (method === "aes" || method === "rsa") {
+                    let response = await fetch("http://127.0.0.1:5000/decode", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ method: method, text: text })
+                    });
+                    let data = await response.json();
+                    decoded = data.result;
+                }
+                document.getElementById("outputText").value = decoded;
+            } catch (error) {
+                document.getElementById("outputText").value = "Invalid encoded text!";
+            }
+        }
+        
+        function copyToClipboard() {
+            let outputText = document.getElementById("outputText");
+            outputText.select();
+            document.execCommand("copy");
+        }
+    </script>
+</body>
+</html>
