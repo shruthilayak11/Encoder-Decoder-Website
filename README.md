@@ -3,6 +3,9 @@
 
 A **web-based encryption and decryption tool** that allows users to securely encode and decode text and images using various cryptographic techniques. This project is built using **HTML, CSS, JavaScript, PHP, SQL, and Python** to provide a seamless and interactive experience.  
 
+![image](https://github.com/user-attachments/assets/dfcbdd0e-0345-4342-be0e-8f2771f18b94)
+
+
 ## 🚀 Features  
 ✅ **Text Encryption & Decryption** – Supports Base64, ROT13, Hex, and Binary.  
 ✅ **Image Encryption & Decryption** – Convert images into a secure encrypted format.  
