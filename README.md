@@ -12,9 +12,8 @@ A **web-based encryption and decryption tool** that allows users to securely enc
 ✅ **FAQs & About Us** – Learn about encryption and our project.  
 
 ## 🛠 Tech Stack  
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** PHP, SQL  
-- **Encryption Logic:** Python  
+
+HTML, CSS, JS
 
 ## 📂 Project Structure  
 ```
