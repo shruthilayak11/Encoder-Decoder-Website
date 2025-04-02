@@ -7,8 +7,7 @@ A **web-based encryption and decryption tool** that allows users to securely enc
 ✅ **Text Encryption & Decryption** – Supports Base64, ROT13, Hex, and Binary.  
 ✅ **Image Encryption & Decryption** – Convert images into a secure encrypted format.  
 ✅ **User-friendly Interface** – A futuristic cyberpunk-themed UI.  
-✅ **Copy to Clipboard** – Easily copy encoded/decoded text.  
-✅ **Google Login** – Secure authentication (Removed if unused).  
+✅ **Copy to Clipboard** – Easily copy encoded/decoded text.   
 ✅ **Fully Responsive** – Works on all screen sizes.  
 ✅ **FAQs & About Us** – Learn about encryption and our project.  
 
